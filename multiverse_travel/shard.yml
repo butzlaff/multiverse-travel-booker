@@ -1,0 +1,42 @@
+name: multiverse_travel
+version: 0.1.0
+
+authors:
+  - butzlaff <emiliobutz@gmail.com>
+
+targets:
+  multiverse_travel:
+    main: src/multiverse_travel.cr
+
+crystal: '>= 1.10.1'
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+    
+  jennifer:
+    github: imdrasil/jennifer.cr
+    version: "~> 0.12.0" 
+
+  pg:
+    github: will/crystal-pg
+    version: "= 0.26.0"
+
+  sam:
+    github: imdrasil/sam.cr
+    version: 0.5.0
+
+  dotenv:
+    github: drum445/dotenv
+    
+  jennifer_twin:
+    github: imdrasil/jennifer_twin
+    version: 0.1.1
+    
+  serializer:
+    github: imdrasil/serializer
+
+  spec-kemal:
+    github: kemalcr/spec-kemal
+      
+license: MIT

@@ -1,0 +1,37 @@
+services:
+  backend:
+    build: multiverse_travel
+    container_name: multiverse_travel
+    ports:
+      - 3000:3000 # porta padrão da aplicação
+    command: bash -c "crystal sam.cr db:setup && crystal run src/multiverse_travel.cr"
+    volumes:
+      # vincula pasta local com a dentro do container
+      - ./multiverse_travel:/app/
+    environment:
+      APP_ENV: development
+      DATABASE_URI: "postgres://db:5432/multiverse"
+      PORT: 3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - multiverse_travel_network
+  db:
+    image: postgres:14
+    container_name: db
+    environment:
+      POSTGRES_DB: multiverse
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d multiverse -h localhost -p 5432"]
+      interval: 10s
+      retries: 5
+    networks:
+      - multiverse_travel_network
+networks:
+  multiverse_travel_network:
+    driver: bridge

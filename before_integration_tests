@@ -1,0 +1,23 @@
+#!/usr/bin/env crystal
+
+STDIO = {input: Process::Redirect::Inherit, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit}
+
+puts "If docker compose is already up, it is recommended that you run this test again later with it down to test if your API will respond before a timeout during the automated tests.\n\n"
+
+container_name = "multiverse_travel"  # Name of the specific container
+
+Process.run("docker", ["compose", "down"], **STDIO)
+
+if !Process.find_executable("docker-compose").nil?
+  # Start the containers
+  abort unless Process.run("docker-compose", ["-f", "docker-compose.yml", "up", "-d"], **STDIO).success?
+  # Register an exit hook to stop only the specified container
+  at_exit { Process.run("docker", ["stop", container_name], **STDIO) }
+elsif !Process.find_executable("docker").nil?
+  # Start the containers using Docker CLI
+  abort unless Process.run("docker", ["compose", "-f", "docker-compose.yml", "up", "-d"], **STDIO).success?
+  # Register an exit hook to stop only the specified container
+  at_exit { Process.run("docker", ["stop", container_name], **STDIO) }
+else
+  abort("It seems that docker compose is not installed.")
+end
