@@ -1,6 +1,9 @@
-# multiverse_travel
+# Multiverse Travel Booker
 
 ## <h2>👋 Hello, I’m @butzlaff</h2>
+
+<h5>📚Sou apaixonado pelo universo Rick and Morty, já assisti diversas vezes o desenho, e foi muito divertido criar esta API.</h5>
+
 
 ## API REST para criar um plano de viagens de Rick and Morty.
 
@@ -12,25 +15,25 @@ Prepare-se para momentos épicos, perigos imprevisíveis e uma carga de diversã
 <p>Para inciciar, devemos clonar o repositório em sua máquina, com o comando:
 
 ```sh
- git clone git@github.com:butzlaff/api_login.git
+ git git@github.com:butzlaff/multiverse-travel-booker.git
 ```
 
 Feito isto, devemos instalar as dependências, para isso acesse a pasta raiz, onde o programa esta.
 
-> ✨Dica: A pasta raiz, é onde se encontra o arquivo package.json
+> ✨Dica: A pasta raiz, é onde se encontra o arquivo shard.yml
 
 Após estar na pasta raiz, executamos o comando:
 
 ```sh
-npm install  
+shards install  
 ```
-> ✨Caso você não tenha o NodeJs instalado em sua máquina, você pode baixá-lo no seguinte site: [NodeJS SITE](https://nodejs.org/en)
+> ✨Caso você Crystal instalado em sua máquina, você pode baixá-lo no seguinte site: [Crystal Official Web Site](https://crystal-lang.org/)
 
 Depois de instalado, as dependências, agora podemos executar nosso código!
 
-> Nota: Você precisá instalar o banco de dados, existe um docker compose caso queira usar o Mysql, caso não tenha familiaridade com o Docker, poderá ler sua documentação no site: 
+> Nota: Você precisá instalar o banco de dados, existe um docker-compose usando Postgres, caso não tenha familiaridade com o Docker, poderá ler sua documentação no site: 
 
->><a href="https://docs.docker.com">Documentação Docker</a>
+><a href="https://docs.docker.com">Documentação Docker</a>
 
 Ou copiando o link abaixo:
 
@@ -39,116 +42,308 @@ https://docs.docker.com
 ```
 Caso já tenha instalado em sua máquina poderá inciar pelo comando:
 ```sh
-docker compose up 
-```
-Outra coisa necessária é configurar o prisma, caso queira usar o Mysql, ou outro Banco de dados:
-
-Para usar o Mysql, basta inserir o seguinte valor nas variáveis de ambiente, ou no arquivo ".env" do projeto:
-```sh 
-DATABASE_URL="mysql://user:password@host:PORT/database"
+docker compose up -d
 ```
 
-Caso queira usar o banco configurado no projeto basta rodar o comando:
-
+> O código será executado automaticamente no docker.
+> Caso queira rodar localmente talves seja necessário mudar algumas configurações do banco de dados, o comando para rodar localmente é:
 ```sh
-npx prisma migrate dev
+crystal run src/multiverse_travel.cr
 ```
-
-Se precisar resetar o banco de dados:
-
+>Enquanto aos TESTES locais, é imprescindível que o banco de dados esteja limpo, para isso execute o arquivo:
 ```sh
-npx prisma migrate reset
+before_integration_tests
 ```
-
-Para mais configurações consultar a documentação do prisma:
-
-<a href="https://prisma.io">Documentação Prisma</a>
-
-> Este código excutará o programa!
+Feito isto, poderemos rodar os testes:
 ```sh
-npm run dev  
-```
-
-Porém, caso queiro rodar os testes:
-```sh
-npm run test
-```
-ou somente:
-```sh
-npm test
-```
-Caso queira verificar a cobertura dos testes, use o comando:
-```sh
-npm run test:coverage
+KEMAL_ENV=test crystal spec
 ```
 
 ## As rotas válidas são: 
 
-Verfica se a API está online.
+:bomb: Importante [integer] = Array de números inteiros
+Verfica que a API está online.
+
 >GET
 ```sh
-http://localhost:3001/ 
+http://localhost:3000/ 
 ```
 
-
-Cadastrar novo usuário:
+Cadastrar nova Viagem:
 >POST
 ```sh
-http://localhost:3001/users/register
+http://localhost:3000/travel_plans
 ```
 Formato do body para cadastro:
 ```sh
 {
-  "nome": string,
-  "email": string (com email válido),
-  "senha": string,
-  "telefones": [
-    {
-      "numero": string,
-      "ddd": string
-    }
-  ]
+	"travel_stops": [
+		1,
+		2
+	]
 }
 ```
-Fazer login:
+Em caso de sucesso, a API retornará:
 
->POST
-```sh
-http://localhost:3001/users/login
-```
-Formato do body para login:
-```
-{
-  "senha": "string",
-  "email": "string com email válido",
-}
-```
-A Api irá retornar o seguinte formato:
 ```sh
 {
-  "id": number,
-  "data_criacao": data,
-  "data_alteracao": data,
-  "ultimo_login": data,
-  "token": "token válido"
+  "id": 1,
+	"travel_stops": [
+		1,
+		2
+	]
 }
 ```
 
+Buscar todas as viagens cadastradas:
 
-Listar usuário:
-> GET
+:star::star: O retorno de todas as solicitações de GET terá o status 200, quando bem sucedido.
+
+>GET
 ```sh
-http://localhost:3001/users/:id
+http://localhost:3000/travel_plans
 ```
-> Onde ID é o id cadastrado no banco de dados.
+
+Em caso de sucesso, a API retornará um array contendo todas as viagens já cadastradas:
+
+```sh
+[{
+  "id": 1,
+	"travel_stops": [
+		1,
+		2
+	]
+}]
+
+ou [] caso não exista nenhuma
+```
+Além disso é possível retonar as viagens de forma expandida e/ou otimizada:
+
+O retorno da Viagem expandida será parecida com :
+```sh
+[{
+	"id": 1,
+	"travel_stops": [
+		{
+			"id": 1,
+			"name": "Earth (C-137)",
+			"type": "Planet",
+			"dimension": "Dimension C-137"
+		},
+		{
+			"id": 2,
+			"name": "Abadango",
+			"type": "Cluster",
+			"dimension": "unknown"
+		}
+	]
+}]
+```
+O retorno da Viagem otimizada: 
+
+```sh
+[{
+	"id": 1,
+	"travel_stops": [
+		2,
+		1
+	]
+}]
+```
+
+>GET
+```sh
+http://localhost:3000/travel_plans?expand=true&optimize=true
+```
+O resultado da busca por uma Viagem otimizada e expandia será:
+
+```sh
+[{
+	"id": 1,
+	"travel_stops": [
+		{
+			"id": 2,
+			"name": "Abadango",
+			"type": "Cluster",
+			"dimension": "unknown"
+		},
+		{
+			"id": 1,
+			"name": "Earth (C-137)",
+			"type": "Planet",
+			"dimension": "Dimension C-137"
+		}
+	]
+}]
+```
+OBS: 
+  > expand: busca as informações com os dados da localidade das paradas da viagem
+
+  > optimize: Esse paramêtro faz com o que você otimize suas paradas durante, da menor popularidade de uma localidade para maior, porém, visitando todas as localizações de uma mesma dimensão antes de se pular para uma localização de outra dimensão, com o objetivo de minizar os saltos dimensionais.
+
+** Importante: Você pode trazer a rota somente expandida ou otimizada também
+
+Basta alterar o true, para false, ou omitir o paramêtro
+
+```sh
+http://localhost:3000/travel_plans?expand=false&optimize=true
+http://localhost:3000/travel_plans?expand=true&optimize=false
+http://localhost:3000/travel_plans?expand=true
+http://localhost:3000/travel_plans?optimize=true
+```
 
 
+Para recuperar uma viagem específica, basta adicionar o ID na rota:
 
-1. Fork it (<https://github.com/your-github-user/multiverse_travel/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+Em caso de sucesso, a API retornará um JSON contendo a viagem encontrada:
+
+O ID precisa ser to tipo inteiro.
+>GET
+```sh
+http://localhost:3000/travel_plans/1
+```
+E o retorno será: 
+```sh
+{
+  "id": 1,
+	"travel_stops": [
+		1,
+		2
+	]
+}
+```
+Além disso também é possível retonar a viagem de forma expandida e/ou otimizada:
+
+O retorno da Viagem expandida será parecida com :
+```sh
+{
+	"id": 1,
+	"travel_stops": [
+		{
+			"id": 1,
+			"name": "Earth (C-137)",
+			"type": "Planet",
+			"dimension": "Dimension C-137"
+		},
+		{
+			"id": 2,
+			"name": "Abadango",
+			"type": "Cluster",
+			"dimension": "unknown"
+		}
+	]
+}
+```
+O retorno da Viagem otimizada: 
+
+```sh
+{
+	"id": 1,
+	"travel_stops": [
+		2,
+		1
+	]
+}
+```
+
+>GET
+```sh
+http://localhost:3000/travel_plans/:id?expand=true&optimize=true
+```
+O resultado da busca por uma Viagem otimizada e expandia será:
+
+```sh
+{
+	"id": 1,
+	"travel_stops": [
+		{
+			"id": 2,
+			"name": "Abadango",
+			"type": "Cluster",
+			"dimension": "unknown"
+		},
+		{
+			"id": 1,
+			"name": "Earth (C-137)",
+			"type": "Planet",
+			"dimension": "Dimension C-137"
+		}
+	]
+}
+```
+
+```sh
+http://localhost:3000/travel_plans/:id?expand=false&optimize=true
+http://localhost:3000/travel_plans/:id?expand=true&optimize=false
+http://localhost:3000/travel_plans/:id?expand=true
+http://localhost:3000/travel_plans/:id?optimize=true
+```
+Para excluir uma viagem:
+
+>DELETE
+```sh
+http://localhost:3000/travel_plans/1
+```
+E o retorno será somente o status code: 
+```sh
+status: 204 (no content)
+```
+
+Para editar uma viagem:
+
+>PUT
+```sh
+http://localhost:3000/travel_plans/1
+```
+Com o seguintes dados no body: 
+```sh
+{
+  "travel_stops": [3 ,4]
+}
+```
+E o retorno será somente o status code: 
+```sh
+status: 200
+```
+```sh
+{ 
+  "id": 1
+  "travel_stops": [3 ,4]
+}
+```
+
+E por fim, existe uma função para adicionar novas paradas a uma viagem já cadastrada:
+
+>PATCH
+```sh
+http://localhost:3000/travel_plans/1
+```
+
+Se a viagem já estiver com a parada: 1 e 2, como no exemplo abaixo:
+
+```sh
+{
+  "id": 1,
+  "travel_stops": [1, 2]
+}
+```
+E adicionar as seguintes paradas: 
+```sh
+{
+  "travel_stops": [3 ,4]
+}
+```
+
+E o retorno será o status code: 
+```sh
+status: 200
+```
+```sh
+{ 
+  "id": 1
+  "travel_stops": [1, 2, 3 ,4]
+}
+```
 
 ## Contributors
 
