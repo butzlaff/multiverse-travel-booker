@@ -14,4 +14,4 @@ COPY . .
 
 RUN shards install
 
-RUN chmod +x ./start.sh
+COPY . .
